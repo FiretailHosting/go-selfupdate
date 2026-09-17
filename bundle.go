@@ -224,3 +224,22 @@ func safeJoin(dest, name string) (string, error) {
 
 	return target, nil
 }
+
+// CheckBundle verifies a release bundle without installing anything.
+//
+// Worth running in CI against whatever `make package` produced: it is the only
+// thing that catches the packaging and the updater drifting apart, which
+// otherwise shows up for the first time on a device, mid-update.
+func (u *Updater) CheckBundle(r io.Reader) error {
+	staging, err := os.MkdirTemp("", "selfupdate-check-*")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(staging)
+
+	if err := extract(io.LimitReader(r, u.maxAssetBytes()), staging); err != nil {
+		return err
+	}
+
+	return u.verify(staging)
+}

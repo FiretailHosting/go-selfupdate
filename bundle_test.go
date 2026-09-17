@@ -345,3 +345,18 @@ func TestExtractRejectsNonGzip(t *testing.T) {
 		t.Error("extract accepted a non-gzip payload")
 	}
 }
+
+func TestCheckBundle(t *testing.T) {
+	u := testUpdater(t, t.TempDir())
+
+	if err := u.CheckBundle(bytes.NewReader(tarball(t, goodBundle("new")))); err != nil {
+		t.Errorf("CheckBundle rejected a good bundle: %v", err)
+	}
+
+	bad := goodBundle("new")
+	bad[0].body = "<html>404</html>"
+
+	if err := u.CheckBundle(bytes.NewReader(tarball(t, bad))); err == nil {
+		t.Error("CheckBundle accepted a bundle whose binary is an error page")
+	}
+}
