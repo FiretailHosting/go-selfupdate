@@ -220,7 +220,10 @@ func (updater Updater) Install(ctx context.Context, executablePath string) (stri
 	}
 	checkContext, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-	reportedVersion, err := exec.CommandContext(checkContext, temporary.Name(), "--version").Output()
+	versionCommand := exec.CommandContext(checkContext, temporary.Name(), "--version")
+	// Stop waiting for output pipes held open by children after the binary exits.
+	versionCommand.WaitDelay = time.Second
+	reportedVersion, err := versionCommand.Output()
 	if err != nil || strings.TrimSpace(string(reportedVersion)) != version {
 		return "", errors.New("downloaded binary failed its version check")
 	}
