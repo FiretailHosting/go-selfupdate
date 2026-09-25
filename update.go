@@ -1,5 +1,5 @@
-// Package binary updates Linux CLI executables from stable GitHub releases.
-package binary
+// Package selfupdate updates Linux CLI executables from stable GitHub releases.
+package selfupdate
 
 import (
 	"context"
