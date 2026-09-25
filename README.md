@@ -1,13 +1,13 @@
 # go-selfupdate
 
-Go self-updates from GitHub releases. Standard library only; Go 1.23+.
+Self-updates for Linux Go CLIs from GitHub releases. Standard library only; Go 1.23+.
 
-## Standalone CLIs
+## Usage
 
 ```go
-import "github.com/FiretailHosting/go-selfupdate/binary"
+import selfupdate "github.com/FiretailHosting/go-selfupdate"
 
-updater := binary.Updater{
+updater := selfupdate.Updater{
     Owner: "FiretailHosting", Repo: "my-cli",
     Name: "my-cli", Version: version,
     Token: token, // optional for public repositories
@@ -26,14 +26,6 @@ Checksums do not protect against a compromised release publisher.
 `updater.Check(ctx, updater.CachePath(), time.Now())` returns a newer version
 or empty, silently caching checks and failures for 24 hours. Call it only when
 a notice is appropriate; the caller handles output and token lookup.
-
-## Service bundles
-
-The root `selfupdate` package supports tarball-based Linux services:
-`New(Config{...})`, `InstallLatest(ctx)`, and optional `Restart(delay)`.
-Default assets are `<binary>_<tag>_<goos>_<goarch>.tar.gz`. `Dirs` configures
-companion directories; `Status()` checks host wiring. It does not manage systemd
-units or permissions. Bundle installs validate contents, not CLI checksums.
 
 ## Development
 
