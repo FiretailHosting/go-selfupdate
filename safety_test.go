@@ -19,6 +19,7 @@ func TestCancellationAndVersionTimeoutPreserveExecutable(t *testing.T) {
 	}{
 		{"cancelled", fakeReleaseBinary, true},
 		{"version timeout", "#!/bin/sh\nexec sleep 30\n", false},
+		{"child holds output open", "#!/bin/sh\necho 0.2.0\nsleep 30 &\n", false},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			useFakeReleaseServer(t, test.binary, checksumLine(test.binary))
